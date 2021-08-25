@@ -1,27 +1,37 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState} from "react";
+import { useHistory } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import './Login.css'
 
 export default () => {
 
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = useCallback((event) => {
-        event.preventDefault();
-        console.log(username, password);
-    }, [username, password])
+    const history = useHistory();
+
+    const { signIn } = useAuth();
+
+    const handleSubmit = useCallback(
+        async (event) => {
+            event.preventDefault();
+            
+            await signIn({ email, password })
+            history.push('/dashboard')
+
+    }, [email, password]);
 
     return (
         <form className="container" onSubmit={handleSubmit}>
             <h2>Authenticator</h2>
             <div className="form-wraper">
-                <input type="text" placeholder='Username' onChange={(event) => setUsername(event.target.value)}/>
+                <input type="text" placeholder='Email' onChange={(event) => setEmail(event.target.value)}/>
             </div>
 
             <div className="form-wraper">
                 <input type="password" placeholder='Password' onChange={(event) => setPassword(event.target.value)}/>
             </div>
-
+        
             <div className="form-wraper">
                 <button type="submit"> Login </button>
             </div>
