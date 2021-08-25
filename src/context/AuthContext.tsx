@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useContext } from "react";
 import { createContext, useCallback } from "react";
+import history from '../utils/History'
 import api from '../services/api'
 
 
 interface AuthContextState{
     token: TokenState;
     signIn({email, password}: UserData): Promise<void>;
+    signOut(): void;
     userLogged(): boolean;  
 }
 
@@ -25,6 +27,8 @@ function useAuth(): AuthContextState {
     const context = useContext(AuthContext);
     return context;
 }
+
+
 
 const AuthProvider: React.FC = ({ children }) => {
 
@@ -52,6 +56,11 @@ const AuthProvider: React.FC = ({ children }) => {
         localStorage.setItem("@PermissionYT:token", token);
     }, []);
 
+    const signOut = useCallback(() => {
+        localStorage.clear();
+        history.push('/');
+    }, []);
+
     const userLogged = useCallback(() => {
         const token = localStorage.getItem('@PermissionYT:token');
         if(token){
@@ -63,7 +72,7 @@ const AuthProvider: React.FC = ({ children }) => {
     }, []);
 
     return(
-        <AuthContext.Provider value={{ token, signIn, userLogged }}>
+        <AuthContext.Provider value={{ token, signIn, userLogged, signOut }}>
             {children}
         </AuthContext.Provider>
     )

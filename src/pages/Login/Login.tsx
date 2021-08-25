@@ -1,5 +1,5 @@
 import React, { useCallback, useState} from "react";
-import { useHistory } from "react-router-dom";
+import history from '../../utils/History'
 import { useAuth } from "../../context/AuthContext";
 import './Login.css'
 
@@ -8,7 +8,6 @@ export default () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const history = useHistory();
 
     const { signIn } = useAuth();
 

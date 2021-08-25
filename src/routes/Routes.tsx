@@ -6,8 +6,8 @@ import PrivateRoutes from "./PrivateRoutes";
 const Routes = () => {
     return (
         <Switch>
-            <Route path="/" exact component={Login}/>
-            <PrivateRoutes path="/dashboard" exact component={Dashboard}/> 
+            <Route path="/" exact component={ Login }/>
+            <PrivateRoutes path="/dashboard" exact component={ Dashboard }/> 
         </Switch>
     )
 

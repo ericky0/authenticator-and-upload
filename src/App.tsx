@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
+import history from './utils/History'
 import './App.css'
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login/Login'
@@ -7,11 +8,11 @@ import Routes from './routes/Routes';
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router history={history}>
       <AuthProvider>
         <Routes />
       </AuthProvider>
-    </BrowserRouter>
+    </Router>
       
   );
 }
