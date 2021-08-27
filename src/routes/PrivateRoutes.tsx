@@ -7,11 +7,13 @@ interface RoutesPropData extends RouteProps {
 
 const PrivateRoutes: React.FC<RoutesPropData> = ({...rest }) => {
     const context = useAuth();
-    console.log(context);
     if (!context.userLogged) {
         return <Redirect to="/" />
     }
-    if(context.adminLogged()){
+    console.log(context.admin);
+    
+    if(context.admin){
+        console.log(context.admin);
         return <Redirect to="/admin-dashboard" />
     }
     

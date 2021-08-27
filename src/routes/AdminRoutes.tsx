@@ -7,16 +7,10 @@ interface RoutesPropData extends RouteProps {
 
 const AdminRoutes: React.FC<RoutesPropData> = ({...rest }) => {
     const context = useAuth();
-    if (!context.userLogged) {
-        return <Redirect to="/" />
-    }
-    if(!context.adminLogged) {
+    if(!context.admin){
         return <Redirect to="/" />
     }
 
-    
-
-    
     return (
         <Route {...rest} />
      )

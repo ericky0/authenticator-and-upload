@@ -11,7 +11,6 @@ interface AuthContextState{
     signIn({email, password}: UserData): Promise<void>;
     signOut(): void;
     userLogged(): boolean;
-    adminLogged(): boolean
 }
 
 interface UserData{
@@ -47,12 +46,12 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const [admin, setAdmin] = useState(() => {
         const isAdmin = localStorage.getItem('@PermissionAD:role');
-
-        if(isAdmin) {
+        if(isAdmin && JSON.parse(isAdmin)) {
             return true;
+        } else {
+            return false
         }
 
-        return false;
     });
 
     // start signIn
@@ -90,20 +89,10 @@ const AuthProvider: React.FC = ({ children }) => {
         }
         
     }, []);
-
-    const adminLogged = useCallback(() => {
-        const role = localStorage.getItem('@PermissionAD:role');
-        if(role){
-            return true;
-        } else {
-            return false;
-        }
-        
-    }, []);
     
     // return
     return(
-        <AuthContext.Provider value={{ admin, token, signIn, userLogged, signOut, adminLogged  }}>
+        <AuthContext.Provider value={{ admin, token, signIn, userLogged, signOut  }}>
             {children}
         </AuthContext.Provider>
     )
