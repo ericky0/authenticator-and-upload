@@ -7,9 +7,11 @@ import api from '../services/api'
 
 interface AuthContextState{
     token: TokenState;
+    admin: boolean;
     signIn({email, password}: UserData): Promise<void>;
     signOut(): void;
-    userLogged(): boolean;  
+    userLogged(): boolean;
+    adminLogged(): boolean
 }
 
 interface UserData{
@@ -29,12 +31,11 @@ function useAuth(): AuthContextState {
 }
 
 
-
 const AuthProvider: React.FC = ({ children }) => {
 
     const [token, setToken] = useState<TokenState>(() => {
         const token = localStorage.getItem('@PermissionYT:token');
-
+        
         if(token) {
             api.defaults.headers.authorization = `Bearer ${token}`
             return { token };
@@ -42,20 +43,39 @@ const AuthProvider: React.FC = ({ children }) => {
         
         return { } as TokenState;
     });
+    // end useState TOKEN
 
+    const [admin, setAdmin] = useState(() => {
+        const isAdmin = localStorage.getItem('@PermissionAD:role');
+
+        if(isAdmin) {
+            return true;
+        }
+
+        return false;
+    });
+
+    // start signIn
     const signIn = useCallback(async ({email, password}:UserData) => {
-        const response = await api.post(('/auth'), {
+        const response = await api.post(('/login'), {
             email,
             password
         });
 
-        const { token } = response.data;
+
+        
+        const { token, isAdmin } = response.data;
 
         setToken(token);
+        setAdmin(isAdmin);
         
         localStorage.setItem("@PermissionYT:token", token);
+        localStorage.setItem('@PermissionAD:role', isAdmin);
     }, []);
 
+    //end signIn
+
+    //start signOut
     const signOut = useCallback(() => {
         localStorage.clear();
         history.push('/');
@@ -71,11 +91,24 @@ const AuthProvider: React.FC = ({ children }) => {
         
     }, []);
 
+    const adminLogged = useCallback(() => {
+        const role = localStorage.getItem('@PermissionAD:role');
+        if(role){
+            return true;
+        } else {
+            return false;
+        }
+        
+    }, []);
+    
+    // return
     return(
-        <AuthContext.Provider value={{ token, signIn, userLogged, signOut }}>
+        <AuthContext.Provider value={{ admin, token, signIn, userLogged, signOut, adminLogged  }}>
             {children}
         </AuthContext.Provider>
     )
 };
 
+
+//export
 export { useAuth, AuthProvider };

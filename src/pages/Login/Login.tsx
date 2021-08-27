@@ -3,19 +3,22 @@ import history from '../../utils/History'
 import { useAuth } from "../../context/AuthContext";
 import './Login.css'
 
+
+/* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
 export default () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
 
-    const { signIn } = useAuth();
+    const context = useAuth();
 
     const handleSubmit = useCallback(
         async (event) => {
             event.preventDefault();
             
-            await signIn({ email, password })
+            await context.signIn({ email, password });
+            // await context.isAdmin();
             history.push('/dashboard')
 
     }, [email, password]);
