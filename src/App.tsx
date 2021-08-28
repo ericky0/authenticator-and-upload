@@ -1,7 +1,6 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
 import history from './utils/History'
-import './App.css'
 import { AuthProvider } from './context/AuthContext';
 import Routes from './routes/Routes';
 
