@@ -31,7 +31,7 @@ const FileList = ({ files, onDelete }) => (
 
                 {uploadedFile.url && (
                     <a 
-                        href="http://localhost:3000/files/262735b5e83de2d0c44a0e541c1f4f26-eutrankilo.PNG"
+                        href={uploadedFile.url}
                         target="_blank"
                         rel="noopener noreferrer"
                     >

@@ -14,6 +14,22 @@ class UploadDocument extends Component {
         uploadedFiles: [],
     };
 
+
+    async componentDidMount() {
+        const response = await api.get('/listupload');
+        this.setState({
+            uploadedFiles: response.data.map(file => ({
+                id: file.key,
+                name: file.name,
+                readableSize: filesize(file.size),
+                preview: file.url,
+                uploaded: true,
+                url: file.url,
+            }))
+
+        })
+    } 
+
     handleUpload = files => {
         const uploadedFiles = files.map(file => ({
             file,
@@ -75,6 +91,10 @@ class UploadDocument extends Component {
         this.setState({
             uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)
         })
+    }
+
+    componentWillUnmount() {
+        this.state.uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
     }
 
     render() {
