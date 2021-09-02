@@ -6,7 +6,6 @@ import { Container, Content } from './style';
 import Upload from '../../components/UploadZone/index.js';
 import { Component } from 'react';
 import api from '../../services/api'
-import { ThreeSixtyTwoTone } from '@material-ui/icons';
 
 
 class UploadDocument extends Component {
@@ -53,12 +52,14 @@ class UploadDocument extends Component {
                 const progress = parseInt(Math.round(event.loaded * 100 / event.total));
                 this.updateFile(uploadedFile.id, {
                     progress,
+                    
                 })
             }
         }).then(response => {
+            console.log(response);
             this.updateFile(uploadedFile.id, {
                 uploaded: true,
-                id: response.data._id,
+                id: response.data.key,
                 url: response.data.url
             });
         }).catch(() => {
@@ -66,6 +67,14 @@ class UploadDocument extends Component {
                 error: true
             });
         });
+    }
+
+    handleDelete = async id => {
+        await api.delete(`deleteupload/${id}`);
+
+        this.setState({
+            uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)
+        })
     }
 
     render() {
@@ -77,7 +86,7 @@ class UploadDocument extends Component {
                 <Content>
                     <Upload onUpload={this.handleUpload}/>
                     {!!uploadedFiles.length && (
-                        <FileList files={uploadedFiles}/>
+                        <FileList files={uploadedFiles} onDelete={this.handleDelete}/>
                     )}
                 </Content>
             </Container>
