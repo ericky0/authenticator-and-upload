@@ -103,10 +103,6 @@ export default function SignIn() {
             autoComplete="current-password"
             onChange={(event) => setPassword(event.target.value)}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Lembrar-me"
-          />
           <Button
             type="submit"
             fullWidth
@@ -117,11 +113,6 @@ export default function SignIn() {
             Entrar
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Esqueceu sua senha?
-              </Link>
-            </Grid>
             <Grid item>
               <Link href="/cadastro" variant="body2">
                 {"Não tem uma conta?"}

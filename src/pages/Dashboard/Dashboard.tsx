@@ -18,6 +18,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { mainListItems } from './ListItems';
 import Orders from './Orders';
+import history from '../../utils/History'
 
 
 
@@ -143,6 +144,9 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Dashboard
           </Typography>
+          {/* <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} align="right" onClick={event => {his}}>
+            SAIR
+          </Typography> */}
         </Toolbar>
       </AppBar>
       <Drawer

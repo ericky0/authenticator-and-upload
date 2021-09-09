@@ -32,13 +32,16 @@ interface DataResponse {
   users: User[];
 }
 
+
+
 export default function Orders() {
 
+  // const context = useAuth();
+
   const handleClick = useCallback(
-    async (event) => {
+    async (event, userId) => {
         event.preventDefault();
-        
-        history.push('/upload')
+        history.push('/upload', {userId})
 
     }, []);
 
@@ -73,7 +76,7 @@ export default function Orders() {
                   color="primary"
                   className={classes.button}
                   startIcon={<CloudUploadIcon />}
-                  onClick={handleClick}
+                  onClick={( event )=> handleClick(event, user.id)}
                   >
                     Enviar Documento
                 </Button>

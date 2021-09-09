@@ -4,33 +4,38 @@ import filesize from 'filesize';
 import FileList from '../../components/FileList/index';
 import { Container, Content } from './style';
 import Upload from '../../components/UploadZone/index.js';
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../services/api'
+import history from '../../utils/History'
 
+export default function UploadDocument({ location }) {
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    console.log(location);
+    const { userId } = location.state;
+    
+    useEffect(() => {
+        if(!location.state){ 
+            history.push('/dashboard')
+        }
+        (async () => {
+            const response = await api.get(`/finduploadbyid/${userId}`);
+            setUploadedFiles(
+                response.data.map(file => ({
+                    id: file.key,
+                    name: file.name,
+                    readableSize: filesize(file.size),
+                    preview: file.url,
+                    uploaded: true,
+                    url: file.url,
+                })
+            ))
+        
+        })()
 
-class UploadDocument extends Component {
+        return () => uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
+    }, [])
 
-    state = {
-        uploadedFiles: [],
-    };
-
-
-    async componentDidMount() {
-        const response = await api.get('/listupload');
-        this.setState({
-            uploadedFiles: response.data.map(file => ({
-                id: file.key,
-                name: file.name,
-                readableSize: filesize(file.size),
-                preview: file.url,
-                uploaded: true,
-                url: file.url,
-            }))
-
-        })
-    } 
-
-    handleUpload = files => {
+    const handleUpload = async files => {
         const uploadedFiles = files.map(file => ({
             file,
             id: uniqueId(),
@@ -43,75 +48,68 @@ class UploadDocument extends Component {
             url: null,
         }))
 
-        this.setState({
-            uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
-        });
-
-        uploadedFiles.forEach(this.processUpload);
+        setUploadedFiles((state) => state.concat(uploadedFiles))
+        
+        for (const fileToUpload of uploadedFiles) {
+            console.log('file to upload', fileToUpload)
+            await processUpload(fileToUpload)
+            console.log('a proomise terminou')
+        }
     };
 
-    updateFile = (id, data) => {
-        this.setState({
-            uploadedFiles: this.state.uploadedFiles.map(uploadedFile => {
+    const updateFile = (id, data) => {
+        setUploadedFiles((state) => state.map(uploadedFile => {
             return id === uploadedFile.id ? { ...uploadedFile, ...data,  } : uploadedFile;
-        })
-    });
-    }
-    
-    processUpload = (uploadedFile) => {
+        }))
+        console.log(id, data);
+        console.log(uploadedFiles);
+    };
+
+    const processUpload = async (uploadedFile) => {
         const data = new FormData();
 
         data.append('file', uploadedFile.file, uploadedFile.name);
+        data.append('userId', userId)
 
-        api.post('upload', data, {
+        const response = await api.post('/upload', data, {
             onUploadProgress: event => {
                 const progress = parseInt(Math.round(event.loaded * 100 / event.total));
-                this.updateFile(uploadedFile.id, {
-                    progress,
-                    
-                })
+                console.log(progress);
+                updateFile(uploadedFile.id, {progress})
+                console.log('passou')
             }
-        }).then(response => {
-            console.log(response);
-            this.updateFile(uploadedFile.id, {
-                uploaded: true,
-                id: response.data.key,
-                url: response.data.url
-            });
         }).catch(() => {
-            this.updateFile(uploadedFile.id, {
+            updateFile(uploadedFile.id, {
                 error: true
+                
             });
-        });
-    }
-
-    handleDelete = async id => {
-        await api.delete(`deleteupload/${id}`);
-
-        this.setState({
-            uploadedFiles: this.state.uploadedFiles.filter(file => file.id !== id)
+        })
+        if(!response){
+            alert('Arquivo não suportado, verifique o tipo e o tamanho (max 2MB)')
+            return
+        }
+        updateFile(uploadedFile.id, {
+            uploaded: true,
+            id: response.data.key,
+            url: response.data.url
         })
     }
 
-    componentWillUnmount() {
-        this.state.uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
+    const handleDelete = async (id) => {
+        await api.delete(`deleteupload/${id}`);
+        setUploadedFiles((state) => state.filter(file => file.id !== id))
     }
 
-    render() {
-        const {uploadedFiles} = this.state;
-        console.log(uploadedFiles)
-        return(
+
+    return (
             <Container>
                 <GlobalStyle />
                 <Content>
-                    <Upload onUpload={this.handleUpload}/>
+                    <Upload onUpload={handleUpload}/>
                     {!!uploadedFiles.length && (
-                        <FileList files={uploadedFiles} onDelete={this.handleDelete}/>
+                        <FileList files={uploadedFiles} onDelete={handleDelete}/>
                     )}
                 </Content>
             </Container>
-        );
-    }
+    )
 }
-
-export default UploadDocument;

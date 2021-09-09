@@ -11,11 +11,16 @@ interface AuthContextState{
     signIn({email, password}: UserData): Promise<void>;
     signOut(): void;
     userLogged(): boolean;
+    
 }
 
 interface UserData{
     email: string,
     password: string
+}
+
+interface UserId{
+    id: string
 }
 
 interface TokenState{
@@ -74,6 +79,13 @@ const AuthProvider: React.FC = ({ children }) => {
 
     //end signIn
 
+    // storageUser
+
+    // const storageUser = useCallback(async ({id}:UserId) => {
+    //     const response = await api.post((`/finduploadbyid/${id}`));
+    //     localStorage.setItem("usuario", response.data);
+    // }, [])
+
     //start signOut
     const signOut = useCallback(() => {
         localStorage.clear();
@@ -92,7 +104,7 @@ const AuthProvider: React.FC = ({ children }) => {
     
     // return
     return(
-        <AuthContext.Provider value={{ admin, token, signIn, userLogged, signOut  }}>
+        <AuthContext.Provider value={{ admin, token, signIn, userLogged, signOut }}>
             {children}
         </AuthContext.Provider>
     )
