@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,7 +18,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { mainListItems } from './ListItems';
 import Orders from './Orders';
-
+import history from '../../utils/History';
 
 
 function Copyright() {
@@ -126,6 +126,13 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const handleLeave = useCallback(
+    async (event) => {
+        event.preventDefault();
+        history.push('/')
+
+}, []);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -142,6 +149,9 @@ export default function Dashboard() {
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Admin   Dashboard
+          </Typography>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} align="right" onClick={handleLeave}>
+            <p className="pointer">SAIR</p>
           </Typography>
         </Toolbar>
       </AppBar>

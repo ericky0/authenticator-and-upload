@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,7 +19,8 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { mainListItems } from './ListItems';
 import Orders from './Orders';
 import history from '../../utils/History'
-
+import './styles.css'
+import { cursorTo } from 'readline';
 
 
 function Copyright() {
@@ -127,6 +128,13 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const handleLeave = useCallback(
+    async (event) => {
+        event.preventDefault();
+        history.push('/')
+
+}, []);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -144,9 +152,9 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Dashboard
           </Typography>
-          {/* <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} align="right" onClick={event => {his}}>
-            SAIR
-          </Typography> */}
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} align="right" onClick={handleLeave}>
+            <p className="pointer">SAIR</p>
+          </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
