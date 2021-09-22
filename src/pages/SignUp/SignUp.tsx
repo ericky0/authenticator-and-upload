@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Theme } from '@material-ui/core';
+import history from '../../utils/History';
 
 function Copyright() {
   return (
@@ -49,7 +50,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function SignUp() {
   
-  const [name, setName] = useState('');
   const [nameOne, setNameOne] = useState('');
   const [nameTwo, setNameTwo] = useState('');
   const [email, setEmail] = useState('');
@@ -57,9 +57,10 @@ export default function SignUp() {
 
   const handleSubmit = async (event: FormEvent) => {
       event.preventDefault();
-      setName(nameOne + ' ' + nameTwo);
-      const response = await api.post('/createuser', {name, email, password})
+      let newName = nameOne + ' ' + nameTwo;
+      const response = await api.post('/createuser', {name: newName, email, password})
       console.log(response.data);
+      history.push('/');
   }
  
   const classes = useStyles();
